@@ -1,9 +1,8 @@
 import numpy as np
 import math
 from neural_fns import *
-# supposing lins and layers are the same length
 
-# returns the gradient of loss at the previous lin
+# Removes biases from the synapse matrix (the bottom row)
 def remove_bias(syn):
   return np.delete(syn, len(syn)-1, 0)
 
@@ -16,7 +15,9 @@ def bp1(dLoss_dLin, prev_lin_layer, syn, neural_type):
 def T(layer):
   layer = layer[np.newaxis]
   return layer.T
-# layer is a 1D row, dLoss_dLin is a 2d column
+
+# Returns the gradient of loss, w.r.t. the previous layer's linear underpinning.
+# Spec:layer is a 1D row, dLoss_dLin is a 2d column
 def Grad(layer, dLoss_dLinAbove):
   l = ap(layer, 1)
   return np.dot(T(l), dLoss_dLinAbove.T)
