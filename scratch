@@ -1,0 +1,41 @@
+
+def one_bp_step(learning_rate, X, y, lins, layers, syns):
+    # len(syns) = n = depth of NN
+    # len(lins) = n+1 = number of layers
+    n =len(syns)
+
+    #Define obvious derivatives
+    dLayers_dLins = [dNonlin_dInput("sigmoid", lin) for lin in lins]
+    dLayers_dLins[len(lins)-1] = dNonlin_dInput("softmax", lins[len(lins)-1])
+
+    # Remove the biases from the synapse matrix
+    dLinAbove_dLayers = [np.delete(syn, len(syn)-1, 0) for syn in syns]
+
+    #Backprop. DLoss_dLin is a column vector always
+    dLoss_dLins = [0 for _ in lins]
+
+    # Top layer
+    dLoss_dLayer = dLoss_dInput(y, layers[n])
+    dLayer_dLin = dNonlin_dInput("softmax", lins[n])
+    dLoss_dLin = np.dot(dLayer_dLin, dLoss_dLayer)
+    dLoss_dLins[n] = dLoss_dLin
+
+    # start at n-1 and go down to 0
+    for i in range(n-1, -1, -1):
+        # Chain Rule
+        dLoss_dLinAbove = dLoss_dLins[i+1]
+        dLinAbove_dLayer = dLinAbove_dLayers[i]
+        dLayer_dLin = dNonlin_dInput("sigmoid", lins[i])
+
+        dLoss_dLin = np.dot(dLayer_dLin, np.dot(dLinAbove_dLayer, dLoss_dLinAbove))
+        dLoss_dLins[i] = dLoss_dLin
+
+    grads = [0 for _ in range(n)]
+    # fill grads list by dotting the transposed layer + 1, with the d(layerAbove)
+    for i in range(n):
+        # append one to a layer to account for bias
+        LT = appendOne(layers[i])
+        LT.shape = (len(LT), 1)
+        grads[i] = np.dot(LT, dLoss_dLins[i+1].T)
+
+    return [learning_rate*grad for grad in grads]
