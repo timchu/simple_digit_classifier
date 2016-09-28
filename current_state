@@ -1,0 +1,4 @@
+I'm not sure I did this correctly. ... .neural net gives me something odd for epochs 2, and is slow af.
+I'm not sure how to batch.
+I'm not sure that I should be dividing by net samples or not...
+Next time: test on some testing data :)

@@ -9,7 +9,7 @@ def ff1(l0, syn, neural_type="sigmoid"):
     lin1 = dt(l, syn)
     return (lin1, nonlin(neural_type, lin1))
 
-def  printme(a, name="MARKER"):
+def printme(a, name="MARKER"):
     print name
     print a
 
@@ -18,12 +18,11 @@ def  printme(a, name="MARKER"):
 def feedforward(x0, syns, neural_types_list):
     lins = [x0]
     layers = [x0]
-    cur_layer = np.array([x0])
-    v = ap(x0, 1) # to account for bias, the last row of syn
+    cur_layer = x0
     for i in xrange(len(syns)):
-        neural_type = neural_types_list[i]
+        nt = neural_types_list[i]
         syn = syns[i]
-        (next_layer_lin, next_layer) = ff1(cur_layer, syn)
+        (next_layer_lin, next_layer) = ff1(cur_layer, syn, nt)
 
         # Post loop updating
         # set layers 

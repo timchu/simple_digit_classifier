@@ -36,11 +36,12 @@ def one_bp_step(learning_rate, X, y, lins, layers, syns):
     dLoss_dTopLin = dt(dTopLayer_dTopLin, dLoss_dTopLayer)
     dLoss_dLins[n] = dLoss_dTopLin
 
-    # range from n-1 to 0. 0 not necessary.
-    for i in range(n):
+    # range from n-1 to 1.
+    for i in range(n-1):
       level = (n-1) - i
       dLoss_dLins[level] = bp1(dLoss_dLins[level+1], lins[level], syns[level], "sigmoid")
       grads[level] = Grad(layers[level], dLoss_dLins[level+1])
+    grads[0] = Grad(layers[0], dLoss_dLins[1])
     return [learning_rate * g for g in grads]
 
     #

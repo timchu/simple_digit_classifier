@@ -40,10 +40,8 @@ def softmax(x_layer):
     sum_exp = 0
     softmax = np.zeros(len(x_layer))
     for x in x_layer:
-        sum_exp += math.exp(x)
-    for i in xrange(len(softmax)):
-        softmax[i] = math.exp(x_layer[i])/sum_exp
-    return softmax
+      sum_exp += math.exp(x)
+    return [math.exp(x)/sum_exp for x in x_layer]
 
 # Utility functions to calculate the derivative. Can be put into own file.
 
