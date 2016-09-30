@@ -6,8 +6,11 @@ def dt(a,b,c="default"):
         return np.dot(a,b)
     return np.dot(a,np.dot(b,c))
 
+# append b to the end all rows in a
+# a :: 2D Numpy Array
 def ap(a,b):
-    return np.append(a,b)
+  b_col = b*np.ones((len(a), 1))
+  return np.hstack([a, b_col])
 
 def rec(x):
     return 1/float(x)
@@ -27,7 +30,7 @@ def nonlin(neuron_type, input_arr):
     elif neuron_type == "softmax":
         return softmax(input_arr)
     else:
-        print "You didn't specify a correct neuron"
+        print("You didn't specify a correct neuron")
 
 # neurons (input = an entire layer of pre-linearized values).
 def sigmoid(x_layer):
@@ -55,24 +58,25 @@ def dNonlin_dInput(neuron_type, input_arr):
     elif neuron_type == "softmax":
         return dSoftmax_dInput(input_arr)
     else:
-        print "You didn't specify a correct neuron"
+        print("You didn't specify a correct neuron")
 
         # Something about softmax is diff from the other two... rely on other neuron linear values
 
 # Returns the matrix corresponding to the linear transform taking dInput into dOutput.
-#   Note: purely  a function of input_arr, not dInput
+# Not used.
 def dSigmoid_dInput(input_arr):
     vals = sigmoid(input_arr)
     n = len(input_arr)
     matrix = np.zeros((n,n))
-    for i in xrange(n):
+    for i in range(n):
         matrix[i][i] = vals[i]*(1-vals[i])
     return matrix
 
+# Also not used.
 def dRelu_dInput(input_arr):
     n = len(input_arr)
     matrix = np.zeros((n,n))
-    for i in xrange(n):
+    for i in range(n):
         if input_arr > 0:
             matrix[i][i] = 1
         else:
@@ -83,25 +87,45 @@ def dSoftmax_dInput(input_arr):
     vals = softmax(input_arr)
     n = len(input_arr)
     matrix = np.zeros((n,n))
-    for i in xrange(n):
-        for j in xrange(n):
+    for i in range(n):
+        for j in range(n):
             if i == j:
                 #check derivative to make sure dimensions right
                 matrix[i][j] = vals[j]*(1 - vals[i])
             else:
                 matrix[i][j] = vals[j]*(-vals[i])
     return matrix
+
+# Evaluate loss
+def Loss(y, input_arr):
+  return crossEntropy(y, input_arr)
+
+def Logrec(x):
+  return math.log(rec(x))
+
+def crossEntropy(y, input_arr):
+  # return dt(y, np.vectorize(Logrec)(input_arr))
+  sum = 0
+  for i in range(len(y)):
+    if y[i] == 0:
+      continue
+    sum += y[i] * Logrec(input_arr[i])
+  return sum
+
+def sum_batch_loss(batch_target_y, batch_zs):
+    return sum([Loss(t_y, z) for t_y, z in zip(batch_target_y, batch_zs[-1])])
+
 # returns a column vector corresponding to the gradient of loss in terms of variables.
 def dLoss_dInput(y, input_arr):
     return dCrossEntropy_dInput(y, input_arr)
 
 def dCrossEntropy_dInput(y, input_arr):
     if len(input_arr) != len(y):
-        print "cross entropy received two distributions of unequal length."
+        print("cross entropy received two distributions of unequal length.")
         return -1
     n = len(y)
     grad = np.zeros(n)
-    for i in xrange(n):
+    for i in range(n):
         grad[i]=y[i]*rec(input_arr[i])
     grad.shape = (n, 1) #transposes our gradient to be column vector.
     return grad

@@ -1,34 +1,38 @@
 import numpy as np
 from neural_fns import *
 
-# l0 :: numpy.array
+# l0 :: numpy.array (1D)
 def ff1(l0, syn, neural_type="sigmoid"):
     #<x_1, .. x_n, 1>
     l = ap(l0, 1)
     #<x_1 .. x_n, 1> * <-[S1]-,...-[b]->
-    lin1 = dt(l, syn)
-    return (lin1, nonlin(neural_type, lin1))
+    y1 = dt(l, syn)
+    return (y1, nonlin(neural_type, y1))
 
-def printme(a, name="MARKER"):
-    print name
-    print a
+#l0 :: numpy.array (2D)
+def ff2(l0s, syn, neural_type="sigmoid"):
+    #<x_1, .. x_n, 1>
+    #<..........., 1>
+    #<..........., 1>
+    batch_x = ap(l0s, 1)
+    batch_y1s = dt(batch_x, syn)
+    batch_x1 = np.vstack([nonlin(neural_type, batch_y1) for batch_y1 in batch_y1s])
+    return (batch_y1s, batch_x1)
 
-# Return (lins layers, layers)
-# Type: x0 = arr, syns = list of arrs, neural_types_list = list of strings
-def feedforward(x0, syns, neural_types_list):
-    lins = [x0]
-    layers = [x0]
-    cur_layer = x0
-    for i in xrange(len(syns)):
+def ff(x0, syns, neural_types_list):
+    ys = ["base"]
+    zs = [x0]
+    cur_z = x0
+    for i in range(len(syns)):
         nt = neural_types_list[i]
         syn = syns[i]
-        (next_layer_lin, next_layer) = ff1(cur_layer, syn, nt)
+        (next_y, next_z) = ff2(cur_z, syn, nt)
 
         # Post loop updating
-        # set layers 
-        layers = layers + [next_layer]
-        lins = lins + [next_layer_lin]
+        # set zs 
+        zs = zs + [next_z]
+        ys = ys + [next_y]
 
-        # set current layer
-        cur_layer = next_layer
-    return (lins, layers)
+        # set current z
+        cur_z = next_z
+    return (ys, zs)
