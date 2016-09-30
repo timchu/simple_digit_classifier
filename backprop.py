@@ -6,7 +6,7 @@ import sys
 # Returns the gradient of loss, w.r.t. the previous z's year underpinning.
 # TYPES:z is a 2D array of z, dLoss_dy is a 2d column
 def Grad(zBatch, dLoss_dyAbove):
-  l = ap(zBatch, 1)
+  l = ap(zBatch, 1) #Append a column of 1s to zBatch
   return np.dot(l.T, dLoss_dyAbove.T)
 
 # Removes biases from the synapse matrix (the bottom row)
