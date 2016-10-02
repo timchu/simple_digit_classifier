@@ -1,4 +1,5 @@
 from random import shuffle
+from random import Random
 import numpy as np
 # Takes a comma delineated string into a list ofto a list of floats and one int
 
@@ -34,7 +35,7 @@ def getData(fileName):
     infile = open(fileName)
     lst = infile.readlines()
     data_lists = [lineToList(line) for line in lst]
-    shuffle(data_lists)
+    Random(4).shuffle(data_lists)
     return data_lists
 
 def Batches_X_y(td, bsize):

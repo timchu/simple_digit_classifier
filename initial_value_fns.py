@@ -2,7 +2,16 @@ import math
 import random
 import numpy as np
 
-def RandomWeights(l0_size, l1_size, seed=1):
+def initial_synapses(layer_sizes, random_seed=0):
+  return [RandomWeights(layer_sizes[i], layer_sizes[i+1], random_seed) for i in range(len(layer_sizes) - 1)]
+
+def initial_zero_synapses(layer_sizes):
+  return [np.zeros((layer_sizes[i] + 1, layer_sizes[i+1])) for i in range(len(layer_sizes) - 1)]
+
+def initial_synapse_and_steps(layer_sizes, random_seed=0):
+  return (initial_synapses(layer_sizes, random_seed), initial_zero_synapses(layer_sizes))
+
+def RandomWeights(l0_size, l1_size, seed=0):
   random.seed(seed)
   x = l0_size
   y = l1_size

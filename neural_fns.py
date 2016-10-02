@@ -96,9 +96,22 @@ def dSoftmax_dInput(input_arr):
                 matrix[i][j] = vals[j]*(-vals[i])
     return matrix
 
-# Evaluate loss
-def Loss(y, input_arr):
-  return crossEntropy(y, input_arr)
+# Evaluate target ys with actual values. Target and actual are numpy arrays
+def Perf(perf_fn, target, actual):
+    if perf_fn == "crossEntropy":
+        return crossEntropy(target, actual)
+    elif perf_fn == "meanClass":
+        return meanClassificationError(target, actual)
+    else:
+        print("Your perf function was not found.")
+        return crossEntropy(target, actual)
+
+#TODO: Add the definition of mean classification error.
+def meanClassificationError(y, input_arr):
+  i = np.argmax(input_arr)
+  if y[i] == 1:
+    return 0
+  return 1
 
 def Logrec(x):
   return math.log(rec(x))
@@ -112,8 +125,13 @@ def crossEntropy(y, input_arr):
     sum += y[i] * Logrec(input_arr[i])
   return sum
 
-def sum_batch_loss(batch_target_y, batch_zs):
-    return sum([Loss(t_y, z) for t_y, z in zip(batch_target_y, batch_zs[-1])])
+def sum_batch_perf(perf_fn, batch_target_y, batch_zs):
+    return sum([Perf(perf_fn, t_y, z) for t_y, z in zip(batch_target_y, batch_zs[-1])])
+
+def avg_perf(perf_fn, bunch_y, bunch_zs):
+    if len(bunch_y) != len(bunch_zs[-1]):
+      print( "ERROR: the target and the actual don't have dimensions matching up!!!!")
+    return sum_batch_perf(perf_fn, bunch_y, bunch_zs)/float(len(bunch_y))
 
 # returns a column vector corresponding to the gradient of loss in terms of variables.
 def dLoss_dInput(y, input_arr):
