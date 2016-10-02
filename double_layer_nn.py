@@ -56,7 +56,7 @@ def plot_100_28x28_imgs(syn):
     plt.show()
 
 valuesTest = dict(
-        num_epochs=10
+        num_epochs=1
     )
 
 valuesA1 = dict(
@@ -126,6 +126,35 @@ valuesF2 = dict(
         layer_sizes=[784, 200, 10],
         d_rate=0.5
     )
+valuesG0 = dict(
+        layer_sizes=[784, 300, 10],
+        d_rate=0.5
+    )
+valuesG1 = dict(
+        layer_sizes=[784, 200, 10],
+        mom = 0.5,
+        d_rate=0.5
+    )
+valuesG2 = dict(
+        layer_sizes=[784, 100, 10],
+        mom = 0.5,
+    )
+valuesG3 = dict(
+        layer_sizes=[784, 400, 10],
+        mom = 0.5,
+        l_rate = 0.2,
+        d_rate=0.5
+    )
+valuesG4 = dict(
+        layer_sizes=[784, 200, 10],
+        mom = 0.5,
+        d_rate = 0.5
+    )
+valuesG5 = dict(
+        layer_sizes=[784, 200, 10],
+        l_rate = 0.05,
+        d_rate=0.5
+    )
 valuesH1 = dict(
         num_epochs=200,
         neural_types = ["sigmoid", "sigmoid", "softmax"],
@@ -137,8 +166,51 @@ valuesH2 = dict(
         layer_sizes=[784,100,100,10],
         perf_fn = "meanClass"
     )
+valuesH0 = dict(
+        layer_sizes=[784, 200, 200, 10],
+        neural_types = ["sigmoid", "sigmoid", "softmax"],
+        d_rate=0.5
+    )
+valuesH8 = dict(
+        layer_sizes=[784, 100, 100, 10],
+        neural_types = ["sigmoid", "sigmoid", "softmax"],
+        mom = 0.5,
+    )
+valuesH9 = dict(
+        layer_sizes=[784, 100, 100, 10],
+        neural_types = ["sigmoid", "sigmoid", "softmax"],
+        mom = 0.7
+    )
+valuesH3 = dict(
+        layer_sizes=[784, 100, 100, 10],
+        neural_types = ["sigmoid", "sigmoid", "softmax"],
+        mom = 0.5,
+        l_rate = 0.2,
+    )
+valuesH4 = dict(
+        layer_sizes=[784, 100, 100, 10],
+        neural_types = ["sigmoid", "sigmoid", "softmax"],
+        mom = 0.9,
+    )
+valuesH5 = dict(
+        layer_sizes=[784, 200, 200, 10],
+        neural_types = ["sigmoid", "sigmoid", "softmax"],
+        d_rate = 0.5
+    )
+valuesH6 = dict(
+        layer_sizes=[784, 200, 200, 10],
+        neural_types = ["sigmoid", "sigmoid", "softmax"],
+        l_rate = 0.05,
+        d_rate=0.5
+    )
+valuesH7 = dict(
+        layer_sizes=[784, 100, 100, 10],
+        neural_types = ["sigmoid", "sigmoid", "softmax"],
+        l_rate = 0.1,
+        d_rate=0.5
+    )
 def train(train_dat, valid_dat, test_dat, layer_sizes=[784,100,10], neural_types=["sigmoid", "softmax"], loss_fn="crossEntropy", perf_fn="crossEntropy", random_seed=1,batch_size=50, num_epochs=200, l_rate=0.1, mom=0.0, d_rate=0.0, num_train_data=3000, ):
-  tag = "_layers_"+str(layer_sizes) + "_r_seed_" + str(random_seed) + "_batch_size_"+str(batch_size) + "_num_epoch_"+str(num_epochs) + "_l_rate_"+str(l_rate)+"_momentum_"+str(mom)+"_dropout_rate_" + str(d_rate)
+  tag = "_layers_"+str(layer_sizes) + "_r_seed_" + str(random_seed) + "_batch_size_"+str(batch_size) + "_num_epoch_"+str(num_epochs) + "_l_rate_"+str(l_rate)+"_momentum_"+str(mom)+"_dropout_rate_" + str(d_rate) + "_perf_fn_"+str(perf_fn)
   # Keep track of synapses and previous step.
   (syns, prev_steps) = init.initial_synapse_and_steps(layer_sizes, random_seed)
   train_batches = sd.Batches_X_y(train_dat, batch_size)
@@ -146,8 +218,10 @@ def train(train_dat, valid_dat, test_dat, layer_sizes=[784,100,10], neural_types
   training_perf_by_epoch = []
   valid_perf_by_epoch = []
 
-  for _ in range(num_epochs):
+  for i in range(num_epochs):
+    print tag
     print("--EPOCH--")
+    print i
     # Find update synapse and previous step
     (syns, prev_steps) = bp.syns_steps_from_batches(train_batches, syns, neural_types, l_rate, mom, prev_steps, d_rate, layer_sizes)
 
@@ -174,23 +248,8 @@ def train(train_dat, valid_dat, test_dat, layer_sizes=[784,100,10], neural_types
   plt.savefig(fig_name)
   plt.clf()
 
-#train(train_dat, valid_dat, "", **valuesA1)
-train(train_dat, valid_dat, "", **valuesA2)
-train(train_dat, valid_dat, "", **valuesA3)
-train(train_dat, valid_dat, "", **valuesA4)
-train(train_dat, valid_dat, "", **valuesA5)
-train(train_dat, valid_dat, "", **valuesA6)
-train(train_dat, valid_dat, "", **valuesB)
-train(train_dat, valid_dat, "", **valuesD1)
-train(train_dat, valid_dat, "", **valuesD2)
-train(train_dat, valid_dat, "", **valuesD3)
-train(train_dat, valid_dat, "", **valuesD4)
-train(train_dat, valid_dat, "", **valuesD5)
-
-train(train_dat, valid_dat, "", **valuesE1)
-train(train_dat, valid_dat, "", **valuesE2)
-train(train_dat, valid_dat, "", **valuesE3)
-train(train_dat, valid_dat, "", **valuesE4)
+train(train_dat, valid_dat, "", **valuesG4)
+train(train_dat, valid_dat, "", **valuesG5)
 
 def pltOnImg(x):
     im = np.array(f2(x, f))
