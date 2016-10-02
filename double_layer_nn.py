@@ -23,8 +23,8 @@ valid_dat = sd.getData(valid_file)
 # Functions to generate images. Plotted the weight of each filter as an image.
 def f(x):
     if (x > 0):
-        return [x,0,0]
-    return [0,-x,0]
+        return [1-2*x,1-2*x,1-2*x]
+    return [1,1+2*x, 1]
 def g(x):
     return [x,x,x]
 def f1(xs, f):
@@ -32,7 +32,7 @@ def f1(xs, f):
 def f2(xss, f):
   return[f1(xs, f) for xs in xss]
 
-
+# Evaluate performance of neural network.
 def getPerf(perf_fn, dat, syns, neural_types, layer_sizes):
   (all_X, all_target_y) = sd.getXY(dat)
   avg_mask = [0.5*np.ones((1,layer_sizes[i])) for i in range(len(layer_sizes)-1)]
@@ -42,6 +42,7 @@ def getPerf(perf_fn, dat, syns, neural_types, layer_sizes):
 #  print nf.avg_perf(perf_fn, all_target_y, all_zs)
   return nf.avg_perf(perf_fn, all_target_y, all_zs)
 
+# Plot weights of first layer as 100 images
 def plot_100_28x28_imgs(syn):
     for i in range(10):
         for j in range(10):
@@ -56,7 +57,7 @@ def plot_100_28x28_imgs(syn):
     plt.show()
 
 valuesTest = dict(
-        num_epochs=1
+        num_epochs=20
     )
 
 valuesA1 = dict(
@@ -219,9 +220,9 @@ def train(train_dat, valid_dat, test_dat, layer_sizes=[784,100,10], neural_types
   valid_perf_by_epoch = []
 
   for i in range(num_epochs):
-    print tag
     print("--EPOCH--")
-    print i
+    print(i)
+    print(tag)
     # Find update synapse and previous step
     (syns, prev_steps) = bp.syns_steps_from_batches(train_batches, syns, neural_types, l_rate, mom, prev_steps, d_rate, layer_sizes)
 
@@ -236,9 +237,7 @@ def train(train_dat, valid_dat, test_dat, layer_sizes=[784,100,10], neural_types
     training_perf_by_epoch.append(training_perf)
     valid_perf_by_epoch.append(valid_perf)
     # Plot image filters of synapses
-#  plot_100_28x28_imgs(syns[0])
-#  plt.plot(range(num_epochs), training_perf_by_epoch)
-#  plt.plot(range(num_epochs), valid_perf_by_epoch)
+  plot_100_28x28_imgs(syns[0])
 
   # Plot losses of traning and validation set.
   plt.plot(range(len(training_perf_by_epoch)), valid_perf_by_epoch)
@@ -248,36 +247,24 @@ def train(train_dat, valid_dat, test_dat, layer_sizes=[784,100,10], neural_types
   plt.savefig(fig_name)
   plt.clf()
 
+train(train_dat, valid_dat, "", **valuesTest)
+train(train_dat, valid_dat, "", **valuesA1)
+train(train_dat, valid_dat, "", **valuesA2)
+train(train_dat, valid_dat, "", **valuesA3)
+train(train_dat, valid_dat, "", **valuesA4)
+train(train_dat, valid_dat, "", **valuesA5)
+train(train_dat, valid_dat, "", **valuesA6)
+train(train_dat, valid_dat, "", **valuesB)
+train(train_dat, valid_dat, "", **valuesD1)
+train(train_dat, valid_dat, "", **valuesD2)
+train(train_dat, valid_dat, "", **valuesD3)
+train(train_dat, valid_dat, "", **valuesD4)
+train(train_dat, valid_dat, "", **valuesD5)
+
+train(train_dat, valid_dat, "", **valuesE1)
+train(train_dat, valid_dat, "", **valuesE2)
+train(train_dat, valid_dat, "", **valuesE3)
+train(train_dat, valid_dat, "", **valuesE4)
+
 train(train_dat, valid_dat, "", **valuesG4)
 train(train_dat, valid_dat, "", **valuesG5)
-
-def pltOnImg(x):
-    im = np.array(f2(x, f))
-    plt.imshow(im)
-
-"""
-def train(training_file, num_epochs, bsize, syns, run_number=0):
-    losses_by_epoch = []
-    training_batches_X_y  = sd.getBatches_X_y(training_file, bsize)
-
-    for i in range(num_epochs):
-      print("===epoch====")
-      sum_losses_in_epoch = 0
-      for (batch_X, batch_target_y) in training_batches_X_y:
-        (batch_ys, batch_zs) = ff.ff(batch_X, syns, ["sigmoid", "softmax"])
-        steps =  bp.grads_from_bp(batch_target_y, batch_ys, batch_zs, syns)
-        syns[0] += steps[0]
-        syns[1] += steps[1]
-        # Sum all the losses to find the average loss after an epoch.
-        sum_losses_in_epoch += nf.sum_batch_loss(batch_target_y, batch_zs) 
-      losses_by_epoch += [sum_losses_in_epoch/float(num_train_data)]
-    print(losses_by_epoch)
-    # Plotting
-    plt.plot(range(len(losses_by_epoch)), losses_by_epoch)
-    plt.ylabel('Average Loss by Epoch for Training Data')
-    fig_name='losses'+str(run_number)+'.png'
-    plt.savefig(fig_name)
-    plt.clf()
-"""
-#syns = init.initial_synapses([784, 100, 10]) 
-# train(train_file, 300, 100, syns)
