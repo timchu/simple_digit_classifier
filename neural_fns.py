@@ -1,6 +1,7 @@
 import numpy as np
 import math
 
+# Shorthand for dot product.
 def dt(a,b,c="default"):
     if c == "default":
         return np.dot(a,b)

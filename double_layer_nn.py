@@ -23,8 +23,8 @@ valid_dat = sd.getData(valid_file)
 # Functions to generate images. Plotted the weight of each filter as an image.
 def f(x):
     if (x > 0):
-        return [x,0,0]
-    return [0,-x,0]
+        return [1-2*x,1-2*x,1-2*x]
+    return [1,1+2*x, 1]
 def g(x):
     return [x,x,x]
 def f1(xs, f):
@@ -32,7 +32,7 @@ def f1(xs, f):
 def f2(xss, f):
   return[f1(xs, f) for xs in xss]
 
-
+# Evaluate performance of neural network.
 def getPerf(perf_fn, dat, syns, neural_types, layer_sizes):
   (all_X, all_target_y) = sd.getXY(dat)
   avg_mask = [0.5*np.ones((1,layer_sizes[i])) for i in range(len(layer_sizes)-1)]
@@ -42,6 +42,7 @@ def getPerf(perf_fn, dat, syns, neural_types, layer_sizes):
 #  print nf.avg_perf(perf_fn, all_target_y, all_zs)
   return nf.avg_perf(perf_fn, all_target_y, all_zs)
 
+# Plot weights of first layer as 100 images
 def plot_100_28x28_imgs(syn):
     for i in range(10):
         for j in range(10):
@@ -56,7 +57,7 @@ def plot_100_28x28_imgs(syn):
     plt.show()
 
 valuesTest = dict(
-        num_epochs=10
+        num_epochs=20
     )
 
 valuesA1 = dict(
@@ -138,7 +139,7 @@ valuesH2 = dict(
         perf_fn = "meanClass"
     )
 def train(train_dat, valid_dat, test_dat, layer_sizes=[784,100,10], neural_types=["sigmoid", "softmax"], loss_fn="crossEntropy", perf_fn="crossEntropy", random_seed=1,batch_size=50, num_epochs=200, l_rate=0.1, mom=0.0, d_rate=0.0, num_train_data=3000, ):
-  tag = "_layers_"+str(layer_sizes) + "_r_seed_" + str(random_seed) + "_batch_size_"+str(batch_size) + "_num_epoch_"+str(num_epochs) + "_l_rate_"+str(l_rate)+"_momentum_"+str(mom)+"_dropout_rate_" + str(d_rate)
+  tag = "_layers_"+str(layer_sizes) + "_r_seed_" + str(random_seed) + "_batch_size_"+str(batch_size) + "_num_epoch_"+str(num_epochs) + "_l_rate_"+str(l_rate)+"_momentum_"+str(mom)+"_dropout_rate_" + str(d_rate) + "_perf_fn_"+str(perf_fn)
   # Keep track of synapses and previous step.
   (syns, prev_steps) = init.initial_synapse_and_steps(layer_sizes, random_seed)
   train_batches = sd.Batches_X_y(train_dat, batch_size)
@@ -146,8 +147,10 @@ def train(train_dat, valid_dat, test_dat, layer_sizes=[784,100,10], neural_types
   training_perf_by_epoch = []
   valid_perf_by_epoch = []
 
-  for _ in range(num_epochs):
+  for i in range(num_epochs):
     print("--EPOCH--")
+    print(i)
+    print(tag)
     # Find update synapse and previous step
     (syns, prev_steps) = bp.syns_steps_from_batches(train_batches, syns, neural_types, l_rate, mom, prev_steps, d_rate, layer_sizes)
 
@@ -162,35 +165,36 @@ def train(train_dat, valid_dat, test_dat, layer_sizes=[784,100,10], neural_types
     training_perf_by_epoch.append(training_perf)
     valid_perf_by_epoch.append(valid_perf)
     # Plot image filters of synapses
-#  plot_100_28x28_imgs(syns[0])
+  plot_100_28x28_imgs(syns[0])
 #  plt.plot(range(num_epochs), training_perf_by_epoch)
 #  plt.plot(range(num_epochs), valid_perf_by_epoch)
 
   # Plot losses of traning and validation set.
-  plt.plot(range(len(training_perf_by_epoch)), valid_perf_by_epoch)
-  plt.plot(range(len(valid_perf_by_epoch)), training_perf_by_epoch)
-  plt.ylabel('Average Loss by Epoch for Training Data')
-  fig_name='losses'+tag+'.png'
-  plt.savefig(fig_name)
-  plt.clf()
+#  plt.plot(range(len(training_perf_by_epoch)), valid_perf_by_epoch)
+#  plt.plot(range(len(valid_perf_by_epoch)), training_perf_by_epoch)
+#  plt.ylabel('Average Loss by Epoch for Training Data')
+#  fig_name='losses'+tag+'.png'
+#  plt.savefig(fig_name)
+#  plt.clf()
 
-#train(train_dat, valid_dat, "", **valuesA1)
-train(train_dat, valid_dat, "", **valuesA2)
-train(train_dat, valid_dat, "", **valuesA3)
-train(train_dat, valid_dat, "", **valuesA4)
-train(train_dat, valid_dat, "", **valuesA5)
-train(train_dat, valid_dat, "", **valuesA6)
-train(train_dat, valid_dat, "", **valuesB)
-train(train_dat, valid_dat, "", **valuesD1)
-train(train_dat, valid_dat, "", **valuesD2)
-train(train_dat, valid_dat, "", **valuesD3)
-train(train_dat, valid_dat, "", **valuesD4)
-train(train_dat, valid_dat, "", **valuesD5)
+#train(train_dat, valid_dat, "", **valuesTest)
+train(train_dat, valid_dat, "", **valuesA1)
+#train(train_dat, valid_dat, "", **valuesA2)
+#train(train_dat, valid_dat, "", **valuesA3)
+#train(train_dat, valid_dat, "", **valuesA4)
+#train(train_dat, valid_dat, "", **valuesA5)
+#train(train_dat, valid_dat, "", **valuesA6)
+#train(train_dat, valid_dat, "", **valuesB)
+#train(train_dat, valid_dat, "", **valuesD1)
+#train(train_dat, valid_dat, "", **valuesD2)
+#train(train_dat, valid_dat, "", **valuesD3)
+#train(train_dat, valid_dat, "", **valuesD4)
+#train(train_dat, valid_dat, "", **valuesD5)
 
-train(train_dat, valid_dat, "", **valuesE1)
-train(train_dat, valid_dat, "", **valuesE2)
-train(train_dat, valid_dat, "", **valuesE3)
-train(train_dat, valid_dat, "", **valuesE4)
+#train(train_dat, valid_dat, "", **valuesE1)
+#train(train_dat, valid_dat, "", **valuesE2)
+#train(train_dat, valid_dat, "", **valuesE3)
+#train(train_dat, valid_dat, "", **valuesE4)
 
 def pltOnImg(x):
     im = np.array(f2(x, f))
